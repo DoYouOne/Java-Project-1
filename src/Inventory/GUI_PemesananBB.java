@@ -1,4 +1,14 @@
 package Inventory;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -18,6 +28,38 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
      */
     public GUI_PemesananBB() {
         initComponents();
+        kode();;
+    }
+    
+    public Connection conn;
+    public void Koneksi() throws SQLException {
+        try {
+            conn=null;
+            Class.forName("com.mysql.jdbc.Driver");
+            conn= DriverManager.getConnection("jdbc:mysql://localhost/manufacturing?user=root&password=");
+        }catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUI_PemesananBB.class.getName()).log(Level.SEVERE,null, ex);
+        }catch (SQLException e) {
+            Logger.getLogger(GUI_PemesananBB.class.getName()).log(Level.SEVERE,null, e);
+        }catch (Exception es) {
+            Logger.getLogger(GUI_PemesananBB.class.getName()).log(Level.SEVERE,null, es);
+        }
+    }
+    
+    public void kode(){
+        try{
+            Koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT kode_bhn FROM `barang`";
+            ResultSet rs = statement.executeQuery(sql);
+            cmb_kodeBB.addItem("Pilih salah satu");
+            while(rs.next()){
+                cmb_kodeBB.addItem(rs.getString("kode_bhn"));
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
     }
 
     /**
@@ -35,7 +77,6 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         txt_nm_toko = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        cmb_kodeBB = new javax.swing.JComboBox();
         jLabel5 = new javax.swing.JLabel();
         cmb_bahan = new javax.swing.JComboBox();
         jLabel6 = new javax.swing.JLabel();
@@ -47,6 +88,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         txt_total = new javax.swing.JTextField();
         btn_pesan = new javax.swing.JButton();
+        cmb_kodeBB = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -59,11 +101,13 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
 
         jLabel4.setText("Kode Bahan Baku           :");
 
-        cmb_kodeBB.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         jLabel5.setText("Bahan                            :");
 
-        cmb_bahan.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmb_bahan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmb_bahanActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Supplier                         :");
 
@@ -170,6 +214,11 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cmb_bahanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_bahanActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_cmb_bahanActionPerformed
 
     /**
      * @param args the command line arguments
