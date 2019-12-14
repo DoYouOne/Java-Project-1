@@ -54,27 +54,39 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     }
     
     public void insert(){
-    int id   = Integer.parseInt(txt_id.getText());
-    String nama   = txt_nama.getText();
-    String alamat   = txt_alamat.getText();
-    int harga   = Integer.parseInt(txt_harga.getText());
-    int jumlah   = Integer.parseInt(txt_jumlah.getText());
-    
-    try {
-        Koneksi();
-        String ukuran_barang   = Integer.toString(txt_pilih.getSelectedIndex());
-        Statement statement = conn.createStatement();
-        statement.executeUpdate("INSERT INTO pesanan(id_pesanan, nama_pembeli, ukuran_barang, Alamat, Harga, Jumlah)" +"values('"+id+"','"+nama+"','"+ukuran_barang+"','"+alamat+"','"+harga+"','"+jumlah+"')");
-        statement.close();
-        //JOptionPane.showMessageDialog(null, "Memasukkan Transaksi Baru!");
-        GUI_Penyimpanan obj = new GUI_Penyimpanan();
-        obj.show();
-        this.dispose();
-    } catch (HeadlessException | SQLException e) {
-        JOptionPane.showMessageDialog(null, "Transaksi Gagal!");
-        refresh();
-    }
- }
+            String uk = null;
+        int id   = Integer.parseInt(txt_id.getText());
+        String nama   = txt_nama.getText();
+        String alamat   = txt_alamat.getText();
+        int harga   = Integer.parseInt(txt_harga.getText());
+        int jumlah   = Integer.parseInt(txt_jumlah.getText());
+
+            if (txt_pilih.getSelectedIndex() == 0) {
+                uk = "Kecil";
+            } else if (txt_pilih.getSelectedIndex() == 1) {
+                uk = "Sedang";
+            } else if (txt_pilih.getSelectedIndex() == 2) {
+                uk = "Besar";
+            } else{
+
+            }
+        String ukuran = uk;
+
+        try {
+            Koneksi();
+            String ukuran_barang   = Integer.toString(txt_pilih.getSelectedIndex());
+            Statement statement = conn.createStatement();
+            statement.executeUpdate("INSERT INTO pesanan(id_pesanan, nama_pembeli, ukuran_barang, Alamat, Harga, Jumlah)" +"values('"+id+"','"+nama+"','"+ukuran+"','"+alamat+"','"+harga+"','"+jumlah+"')");
+            statement.close();
+            //JOptionPane.showMessageDialog(null, "Memasukkan Transaksi Baru!");
+            GUI_Penyimpanan obj = new GUI_Penyimpanan();
+            obj.show();
+            this.dispose();
+        } catch (HeadlessException | SQLException e) {
+            JOptionPane.showMessageDialog(null, "Transaksi Gagal!");
+            refresh();
+        }
+     }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
