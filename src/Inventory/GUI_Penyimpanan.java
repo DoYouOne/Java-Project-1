@@ -1,4 +1,5 @@
 package Inventory;
+import Manufacturing.GUI_Produksi;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -7,7 +8,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-      import javax.swing.table.DefaultTableModel;
+import javax.swing.table.DefaultTableModel;
 
 
 /*
@@ -26,44 +27,17 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
     /**
      * Creates new form GUI_Login
      */
-    int polish, foam, moist, ikat, manis, rasa, awet, flourd;
 
     public GUI_Penyimpanan() {
         initComponents();
-        String polishing = txt_polishing.getText();
-        String foaming = txt_foaming.getText();
-        if (polishing == null || polishing.isEmpty()) {
-            String p = Integer.toString(polish);
-            p = null;
-        } else {
-            //prei
-        }
-        if (foaming == null || foaming.isEmpty()) {
-            String f = Integer.toString(foam);
-            f = "";
-        } else {
-            //prei
-        }
-        if (txt_moistener.getText().isEmpty()) {
-            moist = 0;
-        }
-        if (txt_pemanis.getText() == "") {
-            manis = 0;
-        }
-        if (txt_pengawet.getText() == "") {
-            awet = 0;
-        }
-        if (txt_pengikat.getText() == "") {
-            ikat = 0;
-        }
-        if (txt_rasa.getText() == "") {
-            rasa = 0;
-        }
-        if (txt_flouride.getText() == "") {
-            flourd = 0;
-        } else {
-
-        }
+        polishing();
+        foaming();
+        moistener();
+        pengikat();
+        pemanis();
+        pemberiRasa();
+        pengawet();
+        flouride();
     }
     
     public Connection conn;
@@ -81,36 +55,124 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
         }
     }
     
-    public void insert(){
-        int polish = Integer.parseInt(txt_polishing.getText());
-        int foam    = Integer.parseInt(txt_foaming.getText());
-//        moist   = Integer.parseInt(txt_moistener.getText());
-//        ikat    = Integer.parseInt(txt_pengikat.getText());
-//        manis   = Integer.parseInt(txt_pemanis.getText());
-//        rasa    = Integer.parseInt(txt_rasa.getText());
-//        awet    = Integer.parseInt(txt_pengawet.getText());
-//        flourd  = Integer.parseInt(txt_flouride.getText());
-        try {
+    public void polishing() {
+        try{
             koneksi();
-            if (polish != 0) {
-                Statement statement = conn.createStatement();
-                statement.executeUpdate("INSERT INTO tb_polishing(kode_bahan, stok)" + "values('A001','" + polish + "')");
-                statement.close();
-            } else {
-                //prei
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0001'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_polishing.setText(rs.getString(3));   
             }
-            if (foam != 0) {
-                Statement statement = conn.createStatement();
-                statement.executeUpdate("INSERT INTO tb_foaming(kode_bahan, stok)" + "values('A002','" + foam + "')");
-                statement.close();
-            } else {
-              //prei  
-            }
-            JOptionPane.showMessageDialog(null, "Memasukkan Transaksi Baru!");
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(null, e);
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
         }
-        //refresh();
+    }
+    
+    public void foaming() {
+        try{
+            koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0002'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_foaming.setText(rs.getString(3));   
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void moistener() {
+        try{
+            koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0003'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_moistener.setText(rs.getString(3));   
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void pengikat() {
+        try{
+            koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0004'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_pengikat.setText(rs.getString(3));   
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void pemanis() {
+        try{
+            koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0005'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_pemanis.setText(rs.getString(3));   
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void pemberiRasa() {
+        try{
+            koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0006'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_rasa.setText(rs.getString(3));   
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void pengawet() {
+        try{
+            koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0007'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_pengawet.setText(rs.getString(3));   
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void flouride() {
+        try{
+            koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang` WHERE kode_bhn = 'A0008'";
+            ResultSet rs = statement.executeQuery(sql);
+            if (rs.next()) {
+             txt_flouride.setText(rs.getString(3));   
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
     }
 
 
@@ -173,6 +235,11 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
         });
 
         btn_buat.setText("Buat");
+        btn_buat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_buatActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -192,22 +259,30 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(txt_polishing))
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(jLabel9))
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(17, 17, 17)
-                                        .addComponent(txt_flouride))
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addGap(18, 18, 18)
-                                        .addComponent(btn_buat, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, Short.MAX_VALUE))))
+                                .addGap(28, 28, 28)
+                                .addComponent(btn_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(btn_buat, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel3)
                                     .addComponent(jLabel4)
-                                    .addComponent(jLabel5)
+                                    .addComponent(jLabel5))
+                                .addGap(12, 12, 12)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txt_foaming)
+                                    .addComponent(txt_moistener)
+                                    .addComponent(txt_pengikat)))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel9)
+                                .addGap(17, 17, 17)
+                                .addComponent(txt_flouride))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel6)
                                     .addComponent(jLabel7)
                                     .addComponent(jLabel8))
@@ -215,10 +290,7 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(txt_pengawet)
                                     .addComponent(txt_rasa)
-                                    .addComponent(txt_pemanis)
-                                    .addComponent(txt_foaming)
-                                    .addComponent(txt_moistener)
-                                    .addComponent(txt_pengikat))))))
+                                    .addComponent(txt_pemanis))))))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -241,8 +313,8 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel5)
-                    .addComponent(txt_pengikat, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(txt_pengikat, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(txt_pemanis, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -270,8 +342,17 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
         // TODO add your handling code here:
-        insert();
+        GUI_PemesananBB obj = new GUI_PemesananBB();
+        obj.show();
+        this.dispose();
     }//GEN-LAST:event_btn_pesanActionPerformed
+
+    private void btn_buatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_buatActionPerformed
+        // TODO add your handling code here:
+        GUI_Produksi obj = new GUI_Produksi();
+        obj.show();
+        this.dispose();
+    }//GEN-LAST:event_btn_buatActionPerformed
 
     /**
      * @param args the command line arguments
