@@ -25,12 +25,15 @@ import javax.swing.table.DefaultTableModel;
 public class GUI_Pemesanan extends javax.swing.JFrame {
     Statement stat;
     ResultSet rs;
+    Statement s;
+    ResultSet r;
     String sql;
     /**
      * Creates new form Pesanan
      */
     public GUI_Pemesanan() {
         initComponents();
+        no_urut();
     }
     
     public Connection conn;
@@ -53,9 +56,42 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
         this.setVisible(false);         
     }
     
+    public void no_urut(){
+        try {
+            Koneksi();
+            Statement statement = conn.createStatement();
+            String sql = "Select id from pesanan ORDER by id desc";
+            ResultSet rs = statement.executeQuery(sql);
+            
+            if (rs.next()) {
+                String nofak = rs.getString(1);
+                String AN = "" + (Integer.parseInt(nofak) + 1);
+                String Nol = "";
+
+                if(AN.length()==1)
+                {Nol = "000";}
+                else if(AN.length()==2)
+                {Nol = "00";}
+                else if(AN.length()==3)
+                {Nol = "0";}
+                else if(AN.length()==4)
+                {Nol = "";}
+
+               txt_id.setText("F" + Nol + AN);
+            } else {
+               txt_id.setText("F0001");
+            }
+            
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
     public void insert(){
             String uk = null;
-        int id   = Integer.parseInt(txt_id.getText());
+            
+            
+        String id   = txt_id.getText();
         String nama   = txt_nama.getText();
         String alamat   = txt_alamat.getText();
         int harga   = Integer.parseInt(txt_harga.getText());
@@ -98,7 +134,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         txt_nama = new javax.swing.JTextField();
-        txt_pilih = new javax.swing.JComboBox<>();
+        txt_pilih = new javax.swing.JComboBox<String>();
         txt_id = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -116,12 +152,14 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
 
         jLabel1.setText("Nama Pembeli ");
 
-        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kecil", "Sedang", "Besar" }));
+        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Kecil", "Sedang", "Besar" }));
         txt_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_pilihActionPerformed(evt);
             }
         });
+
+        txt_id.setEditable(false);
 
         jButton1.setText("PESAN");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
