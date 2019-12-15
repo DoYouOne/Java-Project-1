@@ -16,6 +16,7 @@ import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -51,7 +52,8 @@ public class SDM extends javax.swing.JFrame {
             Logger.getLogger(SDM.class.getName()).log(Level.SEVERE, null, es);
         }
     }
-
+    //Open Gate di initComponents
+/*
     public void gate() {
         DefaultTableModel tabelhead = new DefaultTableModel();
         tabelhead.addColumn("Username");
@@ -70,7 +72,7 @@ public class SDM extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "BELUM TERKONEKSI");
         }
     }
-    
+ */
     public void refresh() {
         new SDM().setVisible(true);
         this.setVisible(false);
@@ -122,7 +124,7 @@ public class SDM extends javax.swing.JFrame {
             } catch (HeadlessException | NumberFormatException | SQLException e) {
                 System.out.println("Error." + e);
             }
-            refresh();
+            
         }
     }
 
@@ -138,6 +140,24 @@ public class SDM extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Data gagal di hapus");
             }  
         }
+        refresh();
+    }
+    
+    public void update() {
+        String cari = jTextField3.getText();
+        String username = txt_username.getText();
+        String password = txt_password.getText();
+        try {
+            String permission = Integer.toString(txt_pilih.getSelectedIndex());
+            Statement statement = conn.createStatement();
+            statement.executeUpdate("UPDATE admin SET username='" + username + "'," + "password='" + password + "',hak_akses='" + permission + "' " + "WHERE username = '" + username + "'");
+            statement.close();
+            conn.close();
+            JOptionPane.showMessageDialog(null, "Berhasil Merubah Transaksi!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Error" + e);
+        }
+        refresh();
     }
     
     public void clear() {
@@ -350,8 +370,7 @@ public class SDM extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
-        
+        update();   
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void txt_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_inputActionPerformed
