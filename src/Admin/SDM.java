@@ -111,7 +111,7 @@ public class SDM extends javax.swing.JFrame {
                 Statement statement = conn.createStatement();
                 String sql = "SELECT * FROM permission WHERE username like '%" + usernm + "%'";
                 ResultSet rs = statement.executeQuery(sql);
-                while (rs.next()) {
+                while (rs.next()) { 
                     txt_username.setText(rs.getString(1));
                     txt_password.setText(rs.getString(2));
                     if (Integer.parseInt(rs.getString(3)) == 0) {
