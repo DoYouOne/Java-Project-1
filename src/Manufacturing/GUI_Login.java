@@ -2,6 +2,7 @@ package Manufacturing;
 
 import Admin.SDM;
 import Finance.GUI_Pemesanan;
+import Inventory.GUI_Penyimpanan;
 import com.mysql.jdbc.PreparedStatement;
 import java.awt.HeadlessException;
 import java.sql.Connection;
@@ -9,6 +10,8 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /*
@@ -36,6 +39,51 @@ public class GUI_Login extends javax.swing.JFrame {
         initComponents();
     }
     
+    public Connection conn;
+    public void koneksi() throws SQLException {
+        try {
+            conn=null;
+            Class.forName("com.mysql.jdbc.Driver");
+            conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
+        }catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE,null, ex);
+        }catch (SQLException e) {
+            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE,null, e);
+        }catch (Exception es) {
+            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE,null, es);
+        }
+    }
+    
+    public void refresh() {
+        new GUI_Login().setVisible(true);
+        this.setVisible(false);
+    }
+    
+    public void login(){
+        try {
+            koneksi();
+            Statement statement = conn.createStatement();
+            sql = "SELECT * FROM permission WHERE username='"+txt_user.getText()+"' AND password='"+txt_pass.getText()+"'";
+            ResultSet rs = statement.executeQuery(sql);
+            if(rs.next()){
+                if(txt_user.getText().equals(rs.getString("username")) && txt_pass.getText().equals(rs.getString("password"))){
+                    //JOptionPane.showMessageDialog(null, "berhasil login");
+                    if ("0".equals(rs.getString("hak_akses"))) {
+                        JOptionPane.showMessageDialog(null, "User");
+                    } else if ("1".equals(rs.getString("hak_akses"))) {
+                        JOptionPane.showMessageDialog(null, "Admin");
+                    }
+                }
+            }else{
+                    JOptionPane.showMessageDialog(null, "username atau password salah");
+                    refresh();
+                }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, e);
+            refresh();
+        }
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -47,45 +95,33 @@ public class GUI_Login extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        txt_password = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        txt_id = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
-        txt_pilih = new javax.swing.JComboBox<>();
+        txt_user = new javax.swing.JTextField();
+        btn_login = new javax.swing.JButton();
+        txt_pass = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         jLabel1.setText("FORM LOG-IN");
 
-        txt_password.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_passwordActionPerformed(evt);
-            }
-        });
-
-        jLabel2.setText("ID Karyawan        :");
+        jLabel2.setText("Username            :");
 
         jLabel3.setText("Password              :");
 
-        txt_id.addActionListener(new java.awt.event.ActionListener() {
+        txt_user.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_idActionPerformed(evt);
+                txt_userActionPerformed(evt);
             }
         });
 
-        jButton1.setText("LOG IN");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btn_login.setText("LOG IN");
+        btn_login.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btn_loginActionPerformed(evt);
             }
         });
-
-        jLabel4.setText("Tipe User              :");
-
-        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Marketing", "Produksi", "Inventory", "Finance", "HRD" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -96,16 +132,13 @@ public class GUI_Login extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
-                            .addComponent(jLabel4))
+                            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING))
                         .addGap(29, 29, 29)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txt_password)
-                            .addComponent(txt_id, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                            .addComponent(txt_pilih, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(btn_login, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txt_user, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                            .addComponent(txt_pass))
                         .addGap(29, 29, 29))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(jLabel1)
@@ -119,95 +152,27 @@ public class GUI_Login extends javax.swing.JFrame {
                 .addGap(35, 35, 35)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_user, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel3)
-                    .addComponent(txt_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel4)
-                    .addComponent(txt_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(28, 28, 28)
-                .addComponent(jButton1)
-                .addContainerGap(36, Short.MAX_VALUE))
+                    .addComponent(txt_pass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(69, 69, 69)
+                .addComponent(btn_login)
+                .addContainerGap(33, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txt_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_passwordActionPerformed
+    private void txt_userActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_userActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_passwordActionPerformed
+    }//GEN-LAST:event_txt_userActionPerformed
 
-    private void txt_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_idActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txt_idActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
-        //pemanggilan fungsi koneksi database yang sudah kita buat pada class koneksi.java
-        /*
-        Koneksi DB = new Koneksi();
-        DB.config();
-        con = DB.con;
-        stat = DB.stm;
+    private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
+        login();
         
-        try {
-            sql = "SELECT * FROM admin WHERE username='"+txt_id.getText()+"' AND password='"+txt_password.getText()+"'";
-            rs = stat.executeQuery(sql);
-            if(rs.next()){
-                if(txt_id.getText().equals(rs.getString("username")) && txt_password.getText().equals(rs.getString("password"))){
-                    JOptionPane.showMessageDialog(null, "berhasil login");
-                    GUI_Pemesanan obj = new GUI_Pemesanan();
-                    obj.show();
-                    this.dispose();
-                }
-            }else{
-                    JOptionPane.showMessageDialog(null, "username atau password salah");
-                }
-        } catch (HeadlessException | SQLException e) {
-            JOptionPane.showMessageDialog(this, e.getMessage());
-        }*/
-
-        try {
-            String query = "SELECT * FROM permission WHERE username=? and password=? and tipe_user=?";
-            con = DriverManager.getConnection("jdbc:mysql://localhost/Manufacturing", "root", "");
-            pst = (PreparedStatement) con.prepareStatement(query);
-            pst.setString(1, txt_id.getText());
-            pst.setString(2, txt_password.getText());
-            pst.setString(3, String.valueOf(txt_pilih.getSelectedItem()));
-            rs = pst.executeQuery();
-            if (rs.next()) {
-                JOptionPane.showMessageDialog(this, "username and password matched and you are logined as " + rs.getString("tipe_user"));
-                if (txt_pilih.getSelectedIndex()==0) {
-                    //Marketing
-                    GUI_Pemesanan m = new GUI_Pemesanan();
-                    m.setVisible(true);
-                    this.setVisible(false);
-                }
-                else if(txt_pilih.getSelectedIndex()==1) {
-                    //Produksi
-                }
-                else if(txt_pilih.getSelectedIndex()==2) {
-                    //Inventory
-                }
-                else if(txt_pilih.getSelectedIndex()==3) {
-                    //Finance
-                }
-                else if(txt_pilih.getSelectedIndex()==4) {
-                    //Human Resource Department
-                    SDM h = new SDM();
-                    h.setVisible(true);
-                    this.setVisible(false);
-                }              
-            }else{
-               JOptionPane.showMessageDialog(this, "username and password do not matched");
-            }
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
-        }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_btn_loginActionPerformed
 
     /**
      * @param args the command line arguments
@@ -244,13 +209,11 @@ public class GUI_Login extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btn_login;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField txt_id;
-    private javax.swing.JTextField txt_password;
-    private javax.swing.JComboBox<String> txt_pilih;
+    private javax.swing.JPasswordField txt_pass;
+    private javax.swing.JTextField txt_user;
     // End of variables declaration//GEN-END:variables
 }
