@@ -115,11 +115,11 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         int jumlah     = Integer.parseInt(txt_jmlh.getText());
         
         try {
-//             Koneksi();
-//             Statement statement = conn.createStatement();
-//             statement.executeUpdate("INSERT INTO tb_nasabah(no_rekening, nama_nasabah, no_identitas, alamat, telp, kartu, jenis_kartu, titel)" +"values('"+norek+"','"+nama+"','"+no_id+"','"+alamat+"','"+telp+"','"+kt+"','"+jn+"','"+t+"')");
-//                statement.close();
-//                JOptionPane.showMessageDialog(null, "Berasil memesan!");
+             Koneksi();
+             Statement statement = conn.createStatement();
+             statement.executeUpdate("");
+                statement.close();
+                JOptionPane.showMessageDialog(null, "Berasil memesan!");
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Gagal memesan","Error",JOptionPane.ERROR_MESSAGE);
                 refresh();
