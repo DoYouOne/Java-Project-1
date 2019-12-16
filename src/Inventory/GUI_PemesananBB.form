@@ -213,6 +213,9 @@
       <Properties>
         <Property name="text" type="java.lang.String" value="Pesan"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btn_pesanActionPerformed"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JComboBox" name="cmb_kodeBB">
       <Properties>
@@ -220,6 +223,9 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cmb_kodeBBActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

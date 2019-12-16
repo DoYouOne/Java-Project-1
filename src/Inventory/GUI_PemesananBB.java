@@ -28,7 +28,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
      */
     public GUI_PemesananBB() {
         initComponents();
-        kode();;
+        kode();
     }
     
     public Connection conn;
@@ -36,7 +36,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         try {
             conn=null;
             Class.forName("com.mysql.jdbc.Driver");
-            conn= DriverManager.getConnection("jdbc:mysql://localhost/manufacturing?user=root&password=");
+            conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
         }catch (ClassNotFoundException ex) {
             Logger.getLogger(GUI_PemesananBB.class.getName()).log(Level.SEVERE,null, ex);
         }catch (SQLException e) {
@@ -50,16 +50,43 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         try{
             Koneksi();
             Statement statement = conn.createStatement();
-            String sql="SELECT kode_bhn FROM `barang`";
+            String sql="SELECT * FROM `barang`";
             ResultSet rs = statement.executeQuery(sql);
             cmb_kodeBB.addItem("Pilih salah satu");
             while(rs.next()){
-                cmb_kodeBB.addItem(rs.getString("kode_bhn"));
+                Object[] obj = new Object[3];
+                obj[0] = rs.getString("kode_bhn");
+                
+                cmb_kodeBB.addItem(obj[0]);
             }
             statement.close();
         }catch (Exception ex){
            System.out.println("Error."+ex);
         }
+    }
+    
+    public void dropdown(){
+        try {
+        Koneksi();
+        Statement stt = conn.createStatement();
+        String sql = "select nama_bhn from barang where kode_bhn='"+cmb_kodeBB.getSelectedItem()+"'";  
+        ResultSet res = stt.executeQuery(sql);
+        
+        while(res.next()){
+            Object[] ob = new Object[3];
+            ob[0]=  res.getString(1);
+            //ob[1]= res.getString(2);
+            //ob[2]= res.getString(3);
+            cmb_bahan.removeAllItems();
+            cmb_bahan.addItem((String) ob[0]);
+            //jTextFieldJenis_Kelamin.setText((String) ob[1]);
+            //jTextFieldJurusan.setText((String) ob[2]);
+        }
+        res.close(); stt.close();
+         
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }              
     }
 
     /**
@@ -118,6 +145,17 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         jLabel9.setText("Total                             :");
 
         btn_pesan.setText("Pesan");
+        btn_pesan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_pesanActionPerformed(evt);
+            }
+        });
+
+        cmb_kodeBB.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmb_kodeBBActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -219,6 +257,15 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         // TODO add your handling code here:
         
     }//GEN-LAST:event_cmb_bahanActionPerformed
+
+    private void cmb_kodeBBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_kodeBBActionPerformed
+        // TODO add your handling code here: 
+        dropdown();
+    }//GEN-LAST:event_cmb_kodeBBActionPerformed
+
+    private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btn_pesanActionPerformed
 
     /**
      * @param args the command line arguments
