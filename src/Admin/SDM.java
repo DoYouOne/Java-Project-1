@@ -24,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
  * @author MikuniTensai
  */
 public class SDM extends javax.swing.JFrame {
+
     //Connection con;
     Statement stat;
     ResultSet rs;
@@ -34,7 +35,6 @@ public class SDM extends javax.swing.JFrame {
      */
     public SDM() {
         initComponents();
-        //gate();
     }
 
     public Connection conn;
@@ -43,7 +43,7 @@ public class SDM extends javax.swing.JFrame {
         try {
             conn = null;
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost/manufacturing?user=root&password=");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(SDM.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException e) {
@@ -52,8 +52,9 @@ public class SDM extends javax.swing.JFrame {
             Logger.getLogger(SDM.class.getName()).log(Level.SEVERE, null, es);
         }
     }
-    //Open Gate di initComponents
+    
 /*
+    //Open Gate di initComponents
     public void gate() {
         DefaultTableModel tabelhead = new DefaultTableModel();
         tabelhead.addColumn("Username");
@@ -61,7 +62,7 @@ public class SDM extends javax.swing.JFrame {
         tabelhead.addColumn("Hak Akses");
         try {
             Koneksi();
-            String sql = "SELECT * FROM admin";
+            String sql = "SELECT * FROM permission";
             Statement stat = conn.createStatement();
             ResultSet res = stat.executeQuery(sql);
             while (res.next()) {
@@ -71,8 +72,8 @@ public class SDM extends javax.swing.JFrame {
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(null, "BELUM TERKONEKSI");
         }
-    }
- */
+    }*/
+    
     public void refresh() {
         new SDM().setVisible(true);
         this.setVisible(false);
@@ -81,19 +82,18 @@ public class SDM extends javax.swing.JFrame {
     public void insert() {
         String user = txt_username.getText();
         String pass = txt_password.getText();
-
         try {
             Koneksi();
             String permission = Integer.toString(txt_pilih.getSelectedIndex());
             Statement statement = conn.createStatement();
-            statement.executeUpdate("INSERT INTO admin(username, password, hak_akses)" + "values('" + user + "','" + pass + "','" + permission + "')");
+            statement.executeUpdate("INSERT INTO permission(username, password, permission)" + "values('" + user + "','" + pass + "','" + permission + "')");
             statement.close();
-            //JOptionPane.showMessageDialog(null, "Memasukkan Transaksi Baru!");
+            JOptionPane.showMessageDialog(null, "Register successfully, please login");
             GUI_Login obj = new GUI_Login();
             obj.show();
             this.dispose();
         } catch (HeadlessException | SQLException e) {
-            JOptionPane.showMessageDialog(null, "Transaksi Gagal!");
+            JOptionPane.showMessageDialog(null, "There is something wrong");
             refresh();
         }
     }
@@ -109,7 +109,7 @@ public class SDM extends javax.swing.JFrame {
             try {
                 Koneksi();
                 Statement statement = conn.createStatement();
-                String sql = "SELECT * FROM admin WHERE username like '%" + usernm + "%'";
+                String sql = "SELECT * FROM permission WHERE username like '%" + usernm + "%'";
                 ResultSet rs = statement.executeQuery(sql);
                 while (rs.next()) {
                     txt_username.setText(rs.getString(1));
@@ -124,7 +124,6 @@ public class SDM extends javax.swing.JFrame {
             } catch (HeadlessException | NumberFormatException | SQLException e) {
                 System.out.println("Error." + e);
             }
-            
         }
     }
 
@@ -138,11 +137,11 @@ public class SDM extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Data Berhasil di hapus");
             } catch (HeadlessException | SQLException e) {
                 JOptionPane.showMessageDialog(null, "Data gagal di hapus");
-            }  
+            }
         }
         refresh();
     }
-    
+
     public void update() {
         String cari = jTextField3.getText();
         String username = txt_username.getText();
@@ -159,7 +158,7 @@ public class SDM extends javax.swing.JFrame {
         }
         refresh();
     }
-    
+
     public void clear() {
         txt_username.setText("");
         txt_password.setText("");
@@ -370,7 +369,7 @@ public class SDM extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        update();   
+        update();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void txt_inputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_inputActionPerformed

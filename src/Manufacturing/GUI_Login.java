@@ -2,6 +2,7 @@ package Manufacturing;
 
 import Admin.SDM;
 import Finance.GUI_Pemesanan;
+import Finance.GUI_Pengeluaran;
 import Inventory.GUI_Penyimpanan;
 import com.mysql.jdbc.PreparedStatement;
 import java.awt.HeadlessException;
@@ -19,71 +20,97 @@ import javax.swing.JOptionPane;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 /**
  *
  * @author mikunitensai
  */
 public class GUI_Login extends javax.swing.JFrame {
-    // deklarasi
+
     Connection con = null;
     PreparedStatement pst = null;
     Statement stat = null;
     ResultSet rs = null;
     String sql;
-    
+
     /**
      * Creates new form Login
      */
     public GUI_Login() {
         initComponents();
     }
-    
+
     public Connection conn;
+
     public void koneksi() throws SQLException {
         try {
-            conn=null;
+            conn = null;
             Class.forName("com.mysql.jdbc.Driver");
-            conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
-        }catch (ClassNotFoundException ex) {
-            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE,null, ex);
-        }catch (SQLException e) {
-            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE,null, e);
-        }catch (Exception es) {
-            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE,null, es);
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE, null, e);
+        } catch (Exception es) {
+            Logger.getLogger(GUI_Login.class.getName()).log(Level.SEVERE, null, es);
         }
     }
-    
+
     public void refresh() {
         new GUI_Login().setVisible(true);
         this.setVisible(false);
     }
-    
-    public void login(){
+
+    public void login() {
         try {
             koneksi();
             Statement statement = conn.createStatement();
-            sql = "SELECT * FROM permission WHERE username='"+txt_user.getText()+"' AND password='"+txt_pass.getText()+"'";
+            sql = "SELECT * FROM permission WHERE username='" + txt_user.getText() + "' AND password='" + txt_pass.getText() + "'";
             ResultSet rs = statement.executeQuery(sql);
-            if(rs.next()){
-                if(txt_user.getText().equals(rs.getString("username")) && txt_pass.getText().equals(rs.getString("password"))){
-                    //JOptionPane.showMessageDialog(null, "berhasil login");
-                    if ("0".equals(rs.getString("hak_akses"))) {
-                        JOptionPane.showMessageDialog(null, "User");
-                    } else if ("1".equals(rs.getString("hak_akses"))) {
-                        JOptionPane.showMessageDialog(null, "Admin");
+            if (rs.next()) {
+                if (txt_user.getText().equals(rs.getString("username")) && txt_pass.getText().equals(rs.getString("password"))) {
+                    if ("0".equals(rs.getString("permission"))) {
+                        SDM obj = new SDM();
+                        obj.show();
+                        this.dispose();
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                    } else if ("1".equals(rs.getString("permission"))) {
+                        GUI_Pemesanan obj = new GUI_Pemesanan();
+                        obj.show();
+                        this.dispose();
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                    } else if ("2".equals(rs.getString("permission"))) {
+                        GUI_Produksi obj = new GUI_Produksi();
+                        obj.show();
+                        this.dispose();
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                    } else if ("3".equals(rs.getString("permission"))) {
+                        GUI_Penyimpanan obj = new GUI_Penyimpanan();
+                        obj.show();
+                        this.dispose();
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                    } else if ("4".equals(rs.getString("permission"))) {
+                        GUI_Pengeluaran obj = new GUI_Pengeluaran();
+                        obj.show();
+                        this.dispose();
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                    } else if ("5".equals(rs.getString("permission"))) {
+                        SDM obj = new SDM();
+                        obj.show();
+                        this.dispose();
+                        JOptionPane.showMessageDialog(null, "HRD");
                     }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Username and password do not match");
                 }
-            }else{
-                    JOptionPane.showMessageDialog(null, "username atau password salah");
-                    refresh();
-                }
+            } else {
+                JOptionPane.showMessageDialog(null, "Username and password do not match");
+                refresh();
+            }
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e);
             refresh();
         }
     }
-    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -157,9 +184,9 @@ public class GUI_Login extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel3)
                     .addComponent(txt_pass, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(69, 69, 69)
+                .addGap(28, 28, 28)
                 .addComponent(btn_login)
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(34, Short.MAX_VALUE))
         );
 
         pack();
@@ -171,18 +198,12 @@ public class GUI_Login extends javax.swing.JFrame {
 
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
         login();
-        
     }//GEN-LAST:event_btn_loginActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -199,10 +220,7 @@ public class GUI_Login extends javax.swing.JFrame {
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(GUI_Login.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        //</editor-fold>
 
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new GUI_Login().setVisible(true);
         });
