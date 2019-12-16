@@ -29,6 +29,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
     public GUI_PemesananBB() {
         initComponents();
         kode();
+        
     }
     
     public Connection conn;
@@ -45,6 +46,12 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
             Logger.getLogger(GUI_PemesananBB.class.getName()).log(Level.SEVERE,null, es);
         }
     }
+    
+    public void refresh(){
+        new GUI_PemesananBB().setVisible(true);
+        this.setVisible(false);
+    }
+    
     
     public void kode(){
         try{
@@ -69,24 +76,54 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         try {
         Koneksi();
         Statement stt = conn.createStatement();
-        String sql = "select nama_bhn from barang where kode_bhn='"+cmb_kodeBB.getSelectedItem()+"'";  
+        String sql = "select * from barang where kode_bhn='"+cmb_kodeBB.getSelectedItem()+"'";  
         ResultSet res = stt.executeQuery(sql);
         
         while(res.next()){
             Object[] ob = new Object[3];
-            ob[0]=  res.getString(1);
-            //ob[1]= res.getString(2);
-            //ob[2]= res.getString(3);
+            ob[0]=  res.getString(2);
+            ob[1]=  res.getString(4);
+            
+            
             cmb_bahan.removeAllItems();
             cmb_bahan.addItem((String) ob[0]);
-            //jTextFieldJenis_Kelamin.setText((String) ob[1]);
-            //jTextFieldJurusan.setText((String) ob[2]);
+            
+            txt_harga.setText((String)ob[1]);
         }
         res.close(); stt.close();
          
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }              
+    }
+    
+    public void total(){
+        int jmlh, hrg;
+        jmlh = Integer.parseInt(txt_jmlh.getText());
+        hrg  = Integer.parseInt(txt_harga.getText());
+        
+        int total = hrg*jmlh;
+        txt_total.setText(Integer.toString(total));
+    }
+    
+    public void insert(){
+        String id_toko = txt_id_toko.getText();
+        String nama    = txt_nm_toko.getText();
+        Object kode_BB = cmb_kodeBB.getSelectedItem();
+        Object bahan   = cmb_bahan.getSelectedItem();
+        String supp    = txt_supplier.getText();
+        int jumlah     = Integer.parseInt(txt_jmlh.getText());
+        
+        try {
+//             Koneksi();
+//             Statement statement = conn.createStatement();
+//             statement.executeUpdate("INSERT INTO tb_nasabah(no_rekening, nama_nasabah, no_identitas, alamat, telp, kartu, jenis_kartu, titel)" +"values('"+norek+"','"+nama+"','"+no_id+"','"+alamat+"','"+telp+"','"+kt+"','"+jn+"','"+t+"')");
+//                statement.close();
+//                JOptionPane.showMessageDialog(null, "Berasil memesan!");
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Gagal memesan","Error",JOptionPane.ERROR_MESSAGE);
+                refresh();
+            }
     }
 
     /**
@@ -111,7 +148,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         txt_jmlh = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        tx_harga = new javax.swing.JTextField();
+        txt_harga = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         txt_total = new javax.swing.JTextField();
         btn_pesan = new javax.swing.JButton();
@@ -142,7 +179,20 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
 
         jLabel8.setText("Harga per                      :");
 
+        txt_harga.setEditable(false);
+
         jLabel9.setText("Total                             :");
+
+        txt_total.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_totalActionPerformed(evt);
+            }
+        });
+        txt_total.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txt_totalKeyReleased(evt);
+            }
+        });
 
         btn_pesan.setText("Pesan");
         btn_pesan.addActionListener(new java.awt.event.ActionListener() {
@@ -193,7 +243,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(tx_harga, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(txt_harga, javax.swing.GroupLayout.PREFERRED_SIZE, 136, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jLabel9)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -240,7 +290,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
-                    .addComponent(tx_harga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txt_harga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
@@ -260,12 +310,27 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
 
     private void cmb_kodeBBActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_kodeBBActionPerformed
         // TODO add your handling code here: 
-        dropdown();
+        
+        if (cmb_kodeBB.getSelectedIndex() == 0) {
+            cmb_bahan.removeAllItems();
+            txt_harga.setText(null);
+        } else{
+            dropdown();
+        }
     }//GEN-LAST:event_cmb_kodeBBActionPerformed
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btn_pesanActionPerformed
+
+    private void txt_totalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_totalActionPerformed
+        // TODO add your handling code here:
+        total();
+    }//GEN-LAST:event_txt_totalActionPerformed
+
+    private void txt_totalKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txt_totalKeyReleased
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_totalKeyReleased
 
     /**
      * @param args the command line arguments
@@ -316,7 +381,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JTextField tx_harga;
+    private javax.swing.JTextField txt_harga;
     private javax.swing.JTextField txt_id_toko;
     private javax.swing.JTextField txt_jmlh;
     private javax.swing.JTextField txt_nm_toko;
