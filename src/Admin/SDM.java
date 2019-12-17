@@ -111,13 +111,23 @@ public class SDM extends javax.swing.JFrame {
                 Statement statement = conn.createStatement();
                 String sql = "SELECT * FROM permission WHERE username like '%" + usernm + "%'";
                 ResultSet rs = statement.executeQuery(sql);
-                while (rs.next()) { 
-                    txt_username.setText(rs.getString(1));
-                    txt_password.setText(rs.getString(2));
-                    if (Integer.parseInt(rs.getString(3)) == 0) {
+                while (rs.next()) {
+                    txt_username.setText(rs.getString(2));
+                    txt_password.setText(rs.getString(3));
+                    if (Integer.parseInt(rs.getString(4)) == 0) {
+                        akses = "Admin";
+                    } else if (Integer.parseInt(rs.getString(4)) == 1) {
                         akses = "Marketing";
+                    } else if (Integer.parseInt(rs.getString(4)) == 2) {
+                        akses = "Produksi";
+                    } else if (Integer.parseInt(rs.getString(4)) == 3) {
+                        akses = "Inventory";
+                    } else if (Integer.parseInt(rs.getString(4)) == 4) {
+                        akses = "Finance";
+                    } else if (Integer.parseInt(rs.getString(4)) == 5) {
+                        akses = "HRD";
                     }
-                    tabelhead.addRow(new Object[]{rs.getString(1), rs.getString(2), akses});
+                    tabelhead.addRow(new Object[]{rs.getString(2), rs.getString(3), akses});
                 }
                 table.setModel(tabelhead);
                 statement.close();
@@ -128,16 +138,18 @@ public class SDM extends javax.swing.JFrame {
     }
 
     public void delete() {
-        int ok = JOptionPane.showConfirmDialog(null, "Apakah Anda yakin akan menghapus data ?", "Konfirmasi", JOptionPane.YES_NO_OPTION);
-        if (ok == 0) {
+        int Confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        if (Confirmation == 0) {
             try {
-                String sql = "DELETE FROM admin WHERE username='" + txt_username.getText() + "'";
+                String sql = "DELETE FROM permission WHERE username='" + txt_username.getText() + "'";
                 java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
                 stmt.executeUpdate();
-                JOptionPane.showMessageDialog(null, "Data Berhasil di hapus");
+                JOptionPane.showMessageDialog(null, "Delete successful");
             } catch (HeadlessException | SQLException e) {
-                JOptionPane.showMessageDialog(null, "Data gagal di hapus");
+                JOptionPane.showMessageDialog(null, "Can not be deleted");
             }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please check again");
         }
         refresh();
     }
@@ -149,7 +161,7 @@ public class SDM extends javax.swing.JFrame {
         try {
             String permission = Integer.toString(txt_pilih.getSelectedIndex());
             Statement statement = conn.createStatement();
-            statement.executeUpdate("UPDATE admin SET username='" + username + "'," + "password='" + password + "',hak_akses='" + permission + "' " + "WHERE username = '" + username + "'");
+            statement.executeUpdate("UPDATE permission SET username='" + username + "'," + "password='" + password + "',permission='" + permission + "' " + "WHERE username = '" + username + "'");
             statement.close();
             conn.close();
             JOptionPane.showMessageDialog(null, "Berhasil Merubah Transaksi!");
@@ -207,7 +219,7 @@ public class SDM extends javax.swing.JFrame {
 
         jLabel2.setText("Password");
 
-        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Marketing", "Produksi", "Inventory", "Finance", "HRD", "Admin" }));
+        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Admin", "Marketing", "Produksi", "Inventory", "Finance", "HRD" }));
         txt_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_pilihActionPerformed(evt);

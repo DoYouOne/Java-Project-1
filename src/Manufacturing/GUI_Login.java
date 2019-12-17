@@ -72,32 +72,32 @@ public class GUI_Login extends javax.swing.JFrame {
                         SDM obj = new SDM();
                         obj.show();
                         this.dispose();
-                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as "+(rs.getString("username")));
                     } else if ("1".equals(rs.getString("permission"))) {
                         GUI_Pemesanan obj = new GUI_Pemesanan();
                         obj.show();
                         this.dispose();
-                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as "+(rs.getString("username")));
                     } else if ("2".equals(rs.getString("permission"))) {
                         GUI_Produksi obj = new GUI_Produksi();
                         obj.show();
                         this.dispose();
-                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as "+(rs.getString("username")));
                     } else if ("3".equals(rs.getString("permission"))) {
                         GUI_Penyimpanan obj = new GUI_Penyimpanan();
                         obj.show();
                         this.dispose();
-                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as "+(rs.getString("username")));
                     } else if ("4".equals(rs.getString("permission"))) {
                         GUI_Pengeluaran obj = new GUI_Pengeluaran();
                         obj.show();
                         this.dispose();
-                        JOptionPane.showMessageDialog(null, "You Are Loggin as"+(rs.getString("username")));
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as "+(rs.getString("username")));
                     } else if ("5".equals(rs.getString("permission"))) {
                         SDM obj = new SDM();
                         obj.show();
                         this.dispose();
-                        JOptionPane.showMessageDialog(null, "HRD");
+                        JOptionPane.showMessageDialog(null, "You Are Loggin as "+(rs.getString("username")));
                     }
                 } else {
                     JOptionPane.showMessageDialog(null, "Username and password do not match");
