@@ -45,7 +45,7 @@ public class GUI_Penyimpanan extends javax.swing.JFrame {
         try {
             conn=null;
             Class.forName("com.mysql.jdbc.Driver");
-            conn= DriverManager.getConnection("jdbc:mysql://localhost/manufacturing?user=root&password=");
+            conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
         }catch (ClassNotFoundException ex) {
             Logger.getLogger(GUI_Penyimpanan.class.getName()).log(Level.SEVERE,null, ex);
         }catch (SQLException e) {
