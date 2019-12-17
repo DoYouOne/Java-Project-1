@@ -41,7 +41,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     try {
         conn=null;
         Class.forName("com.mysql.jdbc.Driver");
-        conn= DriverManager.getConnection("jdbc:mysql://localhost/manufacturing?user=root&password=");
+        conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
     }catch (ClassNotFoundException ex) {
         Logger.getLogger(GUI_Pemesanan.class.getName()).log(Level.SEVERE,null, ex);
     }catch (SQLException e) {
@@ -94,7 +94,6 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
         String id   = txt_id.getText();
         String nama   = txt_nama.getText();
         String alamat   = txt_alamat.getText();
-        int harga   = Integer.parseInt(txt_harga.getText());
         int jumlah   = Integer.parseInt(txt_jumlah.getText());
 
             if (txt_pilih.getSelectedIndex() == 0) {
@@ -112,7 +111,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
             Koneksi();
             String ukuran_barang   = Integer.toString(txt_pilih.getSelectedIndex());
             Statement statement = conn.createStatement();
-            statement.executeUpdate("INSERT INTO pesanan(id_pesanan, nama_pembeli, ukuran_barang, Alamat, Harga, Jumlah)" +"values('"+id+"','"+nama+"','"+ukuran+"','"+alamat+"','"+harga+"','"+jumlah+"')");
+            statement.executeUpdate("INSERT INTO pesanan(id_pesanan, nama_pembeli, ukuran_barang, Alamat, Jumlah)" +"values('"+id+"','"+nama+"','"+ukuran+"','"+alamat+"','"+jumlah+"')");
             statement.close();
             //JOptionPane.showMessageDialog(null, "Memasukkan Transaksi Baru!");
             GUI_Penyimpanan obj = new GUI_Penyimpanan();
@@ -142,8 +141,6 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
         txt_jumlah = new javax.swing.JTextField();
-        jLabel5 = new javax.swing.JLabel();
-        txt_harga = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         txt_alamat = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
@@ -181,8 +178,6 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
 
         jLabel4.setText("Jumlah (COUNT)");
 
-        jLabel5.setText("HARGA per-ITEM");
-
         jLabel6.setText("Alamat");
 
         jLabel7.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
@@ -197,26 +192,28 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel6)
-                            .addComponent(jLabel5)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel3)
-                                .addComponent(jLabel4)))
-                        .addGap(85, 85, 85)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txt_harga, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txt_nama)
-                                .addComponent(txt_id)
-                                .addComponent(txt_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(txt_jumlah)
-                                .addComponent(txt_alamat, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                                    .addComponent(jButton1)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(jButton2)))))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(jLabel2)
+                                    .addComponent(jLabel6))
+                                .addGap(96, 96, 96)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txt_nama)
+                                    .addComponent(txt_pilih, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txt_alamat, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addComponent(jLabel4))
+                                .addGap(85, 85, 85)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txt_id)
+                                    .addComponent(txt_jumlah)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                        .addComponent(jButton1)
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jButton2))))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(94, 94, 94)
                         .addComponent(jLabel7)))
@@ -240,10 +237,6 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
                     .addComponent(jLabel6)
                     .addComponent(txt_alamat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel5)
-                    .addComponent(txt_harga, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txt_jumlah, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
@@ -255,7 +248,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton1))
-                .addContainerGap(39, Short.MAX_VALUE))
+                .addContainerGap(77, Short.MAX_VALUE))
         );
 
         pack();
@@ -319,11 +312,9 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JTextField txt_alamat;
-    private javax.swing.JTextField txt_harga;
     private javax.swing.JTextField txt_id;
     private javax.swing.JTextField txt_jumlah;
     private javax.swing.JTextField txt_nama;
