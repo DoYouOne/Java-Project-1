@@ -96,7 +96,7 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
     }
 
     public void refresh() {
-        new SDM().setVisible(true);
+        new GUI_Pengeluaran().setVisible(true);
         this.setVisible(false);
     }
 
