@@ -1,5 +1,14 @@
 package Inventory;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -15,10 +24,74 @@ public class GUI_Pemasukan extends javax.swing.JFrame {
     /**
      * Creates new form GUI_Pemasukan
      */
+    int id;
     public GUI_Pemasukan() {
         initComponents();
+        pesanan();
     }
-
+    
+    
+    public Connection conn;
+    public void Koneksi() throws SQLException {
+        try {
+            conn=null;
+            Class.forName("com.mysql.jdbc.Driver");
+            conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
+        }catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUI_Pemasukan.class.getName()).log(Level.SEVERE,null, ex);
+        }catch (SQLException e) {
+            Logger.getLogger(GUI_Pemasukan.class.getName()).log(Level.SEVERE,null, e);
+        }catch (Exception es) {
+            Logger.getLogger(GUI_Pemasukan.class.getName()).log(Level.SEVERE,null, es);
+        }
+    }
+    
+    public void refresh(){
+        new GUI_Pemasukan().setVisible(true);
+        this.setVisible(false);
+    }
+    
+    public void pesanan(){
+    try{
+        Koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `permintaan` order by id desc limit 1";
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()){
+                
+                txt_id_pesanan.setText(rs.getString("id_toko"));
+                txt_jmlh.setText(rs.getString("jmlh"));
+                txt_nm_pembeli.setText(rs.getString("nama_toko"));
+                cmb_jenis.addItem(rs.getString("bahan"));
+                txt_total.setText(rs.getString("total"));
+                
+                id = Integer.parseInt(rs.getString("id"));
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void income(){
+        String nama  = txt_nm_pembeli.getText();
+        int jumlah   = Integer.parseInt(txt_jmlh.getText());
+        int total   = Integer.parseInt(txt_total.getText());
+        int id_pesan   = id;
+        Object jenis = cmb_jenis.getSelectedItem();
+        
+        try {
+            Koneksi();
+            Statement statement = conn.createStatement();
+            statement.executeUpdate("Insert into pemasukan set id_pesanan = '"+id_pesan+"', nama= '"+nama+"', jmlh = '"+jumlah+"', jenis= '"+jenis+"', total= '"+total+"'");
+               statement.close();
+               JOptionPane.showMessageDialog(null, "Terima Kasih!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+            refresh();
+        }
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -56,9 +129,12 @@ public class GUI_Pemasukan extends javax.swing.JFrame {
 
         jLabel6.setText("Total Harga           :");
 
-        cmb_jenis.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
-
         btn_income.setText("Income");
+        btn_income.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_incomeActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -136,6 +212,11 @@ public class GUI_Pemasukan extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btn_incomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_incomeActionPerformed
+        // TODO add your handling code here:
+        income();
+    }//GEN-LAST:event_btn_incomeActionPerformed
 
     /**
      * @param args the command line arguments
