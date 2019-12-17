@@ -113,11 +113,13 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
         Object bahan   = cmb_bahan.getSelectedItem();
         String supp    = txt_supplier.getText();
         int jumlah     = Integer.parseInt(txt_jmlh.getText());
+        int harga     = Integer.parseInt(txt_harga.getText());
+        int total     = Integer.parseInt(txt_total.getText());
         
         try {
              Koneksi();
              Statement statement = conn.createStatement();
-             statement.executeUpdate("");
+             statement.executeUpdate("Insert into permintaan set id_toko = '"+id_toko+"', nama_toko= '"+nama+"', kode_bb = '"+kode_BB+"', bahan = '"+bahan+"', supplier = '"+supp+"', jmlh = '"+jumlah+"', harga = '"+harga+"', total = '"+total+"'");
                 statement.close();
                 JOptionPane.showMessageDialog(null, "Berasil memesan!");
             } catch (Exception e) {
@@ -321,6 +323,7 @@ public class GUI_PemesananBB extends javax.swing.JFrame {
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
         // TODO add your handling code here:
+        insert();
     }//GEN-LAST:event_btn_pesanActionPerformed
 
     private void txt_totalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_totalActionPerformed
