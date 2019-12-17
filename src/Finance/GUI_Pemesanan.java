@@ -34,6 +34,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     public GUI_Pemesanan() {
         initComponents();
         no_urut();
+        tampil();
     }
     
     public Connection conn;
@@ -122,6 +123,27 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
             refresh();
         }
      }
+    
+    public void tampil() {
+        DefaultTableModel tabelhead = new DefaultTableModel();
+        tabelhead.addColumn("Nama Pembeli");
+        tabelhead.addColumn("Ukurang Barang");
+        tabelhead.addColumn("Alamat");
+        tabelhead.addColumn("Jumlah");
+        tabelhead.addColumn("ID Pesanan");
+        try {
+            Koneksi();
+            String sql = "SELECT * FROM pesanan";
+            Statement stat = conn.createStatement();
+            ResultSet res = stat.executeQuery(sql);
+            while (res.next()) {
+                tabelhead.addRow(new Object[]{res.getString(3), res.getString(4), res.getString(5),res.getString(6),res.getString(2)});
+            }
+            table.setModel(tabelhead);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "BELUM TERKONEKSI");
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -131,9 +153,11 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
         txt_nama = new javax.swing.JTextField();
-        txt_pilih = new javax.swing.JComboBox<String>();
+        txt_pilih = new javax.swing.JComboBox<>();
         txt_id = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -144,12 +168,27 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
         txt_alamat = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        table = new javax.swing.JTable();
+
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("Nama Pembeli ");
 
-        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Kecil", "Sedang", "Besar" }));
+        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kecil", "Sedang", "Besar" }));
         txt_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_pilihActionPerformed(evt);
@@ -182,6 +221,19 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
 
         jLabel7.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
         jLabel7.setText("PEMESANAN BARANG");
+
+        table.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "Nama Pembeli", "Ukurang Barang", "Alamat", "Jumlah", "ID Pesanan"
+            }
+        ));
+        jScrollPane2.setViewportView(table);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -216,8 +268,11 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
                                         .addComponent(jButton2))))))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(94, 94, 94)
-                        .addComponent(jLabel7)))
-                .addContainerGap(46, Short.MAX_VALUE))
+                        .addComponent(jLabel7))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 377, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(15, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -248,7 +303,9 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton2)
                     .addComponent(jButton1))
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         pack();
@@ -314,6 +371,10 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable1;
+    private javax.swing.JTable table;
     private javax.swing.JTextField txt_alamat;
     private javax.swing.JTextField txt_id;
     private javax.swing.JTextField txt_jumlah;
