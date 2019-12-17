@@ -5,6 +5,17 @@
  */
 package Manufacturing;
 
+import Finance.GUI_Pemesanan;
+import Inventory.GUI_PemesananBB;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author mikunitensai
@@ -16,6 +27,115 @@ public class GUI_Produksi extends javax.swing.JFrame {
      */
     public GUI_Produksi() {
         initComponents();
+        id_pesan();
+        bb();
+    }
+    
+    public Connection conn;
+    public void Koneksi() throws SQLException {
+        try {
+            conn=null;
+            Class.forName("com.mysql.jdbc.Driver");
+            conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
+        }catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUI_Produksi.class.getName()).log(Level.SEVERE,null, ex);
+        }catch (SQLException e) {
+            Logger.getLogger(GUI_Produksi.class.getName()).log(Level.SEVERE,null, e);
+        }catch (Exception es) {
+            Logger.getLogger(GUI_Produksi.class.getName()).log(Level.SEVERE,null, es);
+        }
+    }
+    
+    public void refresh(){
+        new GUI_Produksi().setVisible(true);
+        this.setVisible(false);
+    }
+    
+    public void id_pesan(){
+        try{
+            Koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `pesanan` order by id_pesanan desc";
+            ResultSet rs = statement.executeQuery(sql);
+            cmb_pesan.addItem("Pilih salah satu");
+            while(rs.next()){
+                Object[] obj = new Object[3];
+                obj[0] = rs.getString("id_pesanan");
+                
+                cmb_pesan.addItem(obj[0]);
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void detail(){
+        try {
+        Koneksi();
+        Statement stt = conn.createStatement();
+        String sql = "select * from pesanan where id_pesanan='"+cmb_pesan.getSelectedItem()+"'";  
+        ResultSet res = stt.executeQuery(sql);
+        
+        while(res.next()){
+            Object[] ob = new Object[3];
+            ob[0]=  res.getString(3);
+            ob[1]=  res.getString(4);
+            
+            
+            txt_pembeli.setText((String) ob[0]);
+            
+            if ("Kecil".equals(ob[1])) {
+                txt_ongkos.setText("120000");
+            } else if ("Seang".equals(ob[1])) {
+                txt_ongkos.setText("150000");
+            } else if ("Besar".equals(ob[1])) {
+                txt_ongkos.setText("200000");
+            }
+        }
+        res.close(); stt.close();
+         
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }              
+    }
+    
+    public void bb(){
+        try{
+            Koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `barang`";
+            ResultSet rs = statement.executeQuery(sql);
+            cmb_bb.addItem("Pilih salah satu");
+            while(rs.next()){
+                Object[] obj = new Object[3];
+                obj[0] = rs.getString("kode_bhn");
+                obj[1] = "Bahan "+rs.getString("nama_bhn");
+                
+                cmb_bb.addItem(obj[1]);
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void proses(){
+        String nama  = txt_pembeli.getText();
+        int ongkos   = Integer.parseInt(txt_ongkos.getText());
+        Object pesan = cmb_pesan.getSelectedItem();
+        Object bb    = cmb_bb.getSelectedItem();
+        
+        try {
+            Koneksi();
+            Statement statement = conn.createStatement();
+            statement.executeUpdate("Insert into rencana_produksi set id_pesanan = '"+pesan+"', ongkos= '"+ongkos+"', bahan_baku = '"+bb+"', nama = '"+nama+"'");
+               statement.close();
+               JOptionPane.showMessageDialog(null, "Berhasil memesan!");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e);
+            refresh();
+        }
     }
 
     /**
@@ -30,13 +150,13 @@ public class GUI_Produksi extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txt_pembeli = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel4 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txt_ongkos = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
-        jComboBox1 = new javax.swing.JComboBox();
+        cmb_pesan = new javax.swing.JComboBox();
+        cmb_bb = new javax.swing.JComboBox();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -47,9 +167,9 @@ public class GUI_Produksi extends javax.swing.JFrame {
 
         jLabel3.setText("ID Pemesanan            :");
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        txt_pembeli.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                txt_pembeliActionPerformed(evt);
             }
         });
 
@@ -62,21 +182,19 @@ public class GUI_Produksi extends javax.swing.JFrame {
 
         jLabel4.setText("Ongkos Kerja             :");
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        txt_ongkos.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                txt_ongkosActionPerformed(evt);
             }
         });
 
         jLabel5.setText("Bahan Baku                :");
 
-        jTextField5.addActionListener(new java.awt.event.ActionListener() {
+        cmb_pesan.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField5ActionPerformed(evt);
+                cmb_pesanActionPerformed(evt);
             }
         });
-
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -89,7 +207,7 @@ public class GUI_Produksi extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_pembeli, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -98,9 +216,9 @@ public class GUI_Produksi extends javax.swing.JFrame {
                             .addComponent(jLabel3))
                         .addGap(30, 30, 30)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(jTextField4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
-                            .addComponent(jTextField5)
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(txt_ongkos, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 201, Short.MAX_VALUE)
+                            .addComponent(cmb_pesan, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(cmb_bb, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
@@ -114,19 +232,19 @@ public class GUI_Produksi extends javax.swing.JFrame {
                 .addGap(30, 30, 30)
                 .addComponent(jLabel1)
                 .addGap(30, 30, 30)
-                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txt_pembeli, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(cmb_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_ongkos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel5))
+                    .addComponent(jLabel5)
+                    .addComponent(cmb_bb, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addContainerGap(43, Short.MAX_VALUE))
@@ -140,21 +258,22 @@ public class GUI_Produksi extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txt_pembeliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_pembeliActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txt_pembeliActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        proses();
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void txt_ongkosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_ongkosActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_txt_ongkosActionPerformed
 
-    private void jTextField5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField5ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField5ActionPerformed
+    private void cmb_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_pesanActionPerformed
+        detail();
+    }//GEN-LAST:event_cmb_pesanActionPerformed
 
     /**
      * @param args the command line arguments
@@ -193,15 +312,15 @@ public class GUI_Produksi extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JComboBox cmb_bb;
+    private javax.swing.JComboBox cmb_pesan;
     private javax.swing.JButton jButton1;
-    private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
+    private javax.swing.JTextField txt_ongkos;
+    private javax.swing.JTextField txt_pembeli;
     // End of variables declaration//GEN-END:variables
 }
