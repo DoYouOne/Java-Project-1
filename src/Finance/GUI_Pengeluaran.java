@@ -5,17 +5,87 @@
  */
 package Finance;
 
+import Admin.SDM;
+import Inventory.GUI_Penyimpanan;
+import Manufacturing.GUI_Login;
+import Manufacturing.Koneksi;
+import java.awt.HeadlessException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author MikuniTensai
  */
 public class GUI_Pengeluaran extends javax.swing.JFrame {
 
+    Statement stat;
+    ResultSet rs;
+    Statement s;
+    ResultSet r;
+    String sql;
+
     /**
      * Creates new form GUI_Pengeluaran1
      */
     public GUI_Pengeluaran() {
         initComponents();
+    }
+
+    public Connection conn;
+
+    public void Koneksi() throws SQLException {
+        try {
+            conn = null;
+            Class.forName("com.mysql.jdbc.Driver");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUI_Pemesanan.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            Logger.getLogger(GUI_Pemesanan.class.getName()).log(Level.SEVERE, null, e);
+        } catch (Exception es) {
+            Logger.getLogger(GUI_Pemesanan.class.getName()).log(Level.SEVERE, null, es);
+        }
+    }
+
+//Error
+    public void buy() {
+        if (jComboBox1.getSelectedItem() == "Kartu ATM/Debit") {
+            try {
+                String id = txt_id.getText();
+                Koneksi();
+                Statement statement = conn.createStatement();
+                String sql = "SELECT * FROM pesanan WHERE id_pesanan like '%" + id + "%'";
+                ResultSet rs = statement.executeQuery(sql);
+                while (rs.first()) {
+                    String biaya = txt_biaya.getText();
+                    String pilih = Integer.toString(jComboBox1.getSelectedIndex());
+                    try {
+                        Koneksi();
+                        statement.executeUpdate("INSERT INTO pengeluaran(id_toko, pembayaran, biaya)" + "values('" + txt_id + "','" + pilih + "','" + biaya + "')");
+                        statement.close();
+                        JOptionPane.showMessageDialog(null, "Buy successfully");
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, "Error" + e);
+                    }
+                    statement.close();
+                }
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Error" + e);
+            }
+        }
+    }
+
+    public void refresh() {
+        new SDM().setVisible(true);
+        this.setVisible(false);
     }
 
     /**
@@ -31,9 +101,9 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox<>();
         jLabel3 = new javax.swing.JLabel();
-        txt_password = new javax.swing.JTextField();
+        txt_biaya = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        txt_password1 = new javax.swing.JTextField();
+        txt_id = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -43,21 +113,21 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
 
         jLabel2.setText("Jenis Pembayaran       :");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kartu ATM/Debit" }));
 
         jLabel3.setText("Biaya        :");
 
-        txt_password.addActionListener(new java.awt.event.ActionListener() {
+        txt_biaya.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_passwordActionPerformed(evt);
+                txt_biayaActionPerformed(evt);
             }
         });
 
         jLabel4.setText("ID Pegawai / Toko :");
 
-        txt_password1.addActionListener(new java.awt.event.ActionListener() {
+        txt_id.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txt_password1ActionPerformed(evt);
+                txt_idActionPerformed(evt);
             }
         });
 
@@ -80,8 +150,8 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
                     .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING))
                 .addGap(29, 29, 29)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txt_password, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
-                    .addComponent(txt_password1)
+                    .addComponent(txt_biaya, javax.swing.GroupLayout.DEFAULT_SIZE, 198, Short.MAX_VALUE)
+                    .addComponent(txt_id)
                     .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(29, 29, 29))
             .addGroup(layout.createSequentialGroup()
@@ -105,11 +175,11 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
                     .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_password, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_biaya, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(22, 22, 22)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txt_password1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4))
                 .addGap(18, 18, 18)
                 .addComponent(jButton1)
@@ -119,16 +189,17 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void txt_passwordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_passwordActionPerformed
+    private void txt_biayaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_biayaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_passwordActionPerformed
+    }//GEN-LAST:event_txt_biayaActionPerformed
 
-    private void txt_password1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_password1ActionPerformed
+    private void txt_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_idActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_txt_password1ActionPerformed
+    }//GEN-LAST:event_txt_idActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        buy();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
@@ -174,7 +245,7 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JTextField txt_password;
-    private javax.swing.JTextField txt_password1;
+    private javax.swing.JTextField txt_biaya;
+    private javax.swing.JTextField txt_id;
     // End of variables declaration//GEN-END:variables
 }
