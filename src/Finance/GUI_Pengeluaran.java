@@ -37,6 +37,7 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
      */
     public GUI_Pengeluaran() {
         initComponents();
+        toko();
     }
 
     public Connection conn;
@@ -55,27 +56,38 @@ public class GUI_Pengeluaran extends javax.swing.JFrame {
         }
     }
 
+    public void toko(){
+    try{
+        Koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `permintaan` order by id desc limit 1";
+            ResultSet rs = statement.executeQuery(sql);
+            while(rs.next()){
+                
+                txt_id.setText(rs.getString("id_toko"));
+                txt_biaya.setText(rs.getString("total"));
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
 //Error
     public void buy() {
         if (jComboBox1.getSelectedItem() == "Kartu ATM/Debit") {
             try {
                 String id = txt_id.getText();
-                Koneksi();
-                Statement statement = conn.createStatement();
-                String sql = "SELECT * FROM pesanan WHERE id_pesanan like '%" + id + "%'";
-                ResultSet rs = statement.executeQuery(sql);
-                while (rs.first()) {
-                    String biaya = txt_biaya.getText();
-                    String pilih = Integer.toString(jComboBox1.getSelectedIndex());
-                    try {
-                        Koneksi();
-                        statement.executeUpdate("INSERT INTO pengeluaran(id_toko, pembayaran, biaya)" + "values('" + txt_id + "','" + pilih + "','" + biaya + "')");
-                        statement.close();
-                        JOptionPane.showMessageDialog(null, "Buy successfully");
-                    } catch (Exception e) {
-                        JOptionPane.showMessageDialog(null, "Error" + e);
-                    }
+                String biaya = txt_biaya.getText();
+                Object pilih = jComboBox1.getSelectedItem();
+                try {
+                    Koneksi();
+                    Statement statement = conn.createStatement();
+                    statement.executeUpdate("INSERT INTO pengeluaran(id_toko, pembayaran, biaya)" + "values('" + id + "','" + pilih + "','" + biaya + "')");
                     statement.close();
+                    JOptionPane.showMessageDialog(null, "Buy successfully");
+                } catch (Exception e) {
+                    JOptionPane.showMessageDialog(null, "Error" + e);
                 }
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, "Error" + e);
