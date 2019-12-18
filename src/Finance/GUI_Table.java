@@ -4,6 +4,16 @@
  * and open the template in the editor.
  */
 package Finance;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -16,6 +26,68 @@ public class GUI_Table extends javax.swing.JFrame {
      */
     public GUI_Table() {
         initComponents();
+        pesanan();
+    }
+    
+    public Connection conn;
+    public void Koneksi() throws SQLException {
+        try {
+            conn=null;
+            Class.forName("com.mysql.jdbc.Driver");
+            conn= DriverManager.getConnection("jdbc:mysql://localhost/db_inventory?user=root&password=");
+        }catch (ClassNotFoundException ex) {
+            Logger.getLogger(GUI_Table.class.getName()).log(Level.SEVERE,null, ex);
+        }catch (SQLException e) {
+            Logger.getLogger(GUI_Table.class.getName()).log(Level.SEVERE,null, e);
+        }catch (Exception es) {
+            Logger.getLogger(GUI_Table.class.getName()).log(Level.SEVERE,null, es);
+        }
+    }
+    
+    public void refresh(){
+        new GUI_Table().setVisible(true);
+        this.setVisible(false);
+    }
+    
+    public void pesanan(){
+        try{
+            Koneksi();
+            Statement statement = conn.createStatement();
+            String sql="SELECT * FROM `pesanan`";
+            ResultSet rs = statement.executeQuery(sql);
+            cmb_pesan.addItem("Pilih salah satu");
+            while(rs.next()){
+                Object[] obj = new Object[3];
+                obj[0] = rs.getString("id_pesanan");
+                
+                cmb_pesan.addItem((String)obj[0]);
+            }
+            statement.close();
+        }catch (Exception ex){
+           System.out.println("Error."+ex);
+        }
+    }
+    
+    public void tabel(){
+        DefaultTableModel tabelhead = new DefaultTableModel();
+        tabelhead.addColumn("ID Pesanan");
+        tabelhead.addColumn("Nama Pembeli");
+        tabelhead.addColumn("Ukuran Barang");
+        tabelhead.addColumn("Alamat");
+        tabelhead.addColumn("Jumlah");
+        try {
+            Koneksi();
+            Statement stt = conn.createStatement();
+            String sql = "select * from pesanan where id_pesanan='"+cmb_pesan.getSelectedItem()+"'";  
+            ResultSet res = stt.executeQuery(sql);
+
+            if(res.next()){
+               tabelhead.addRow(new Object[]{res.getString(2),res.getString(3),res.getString(4),res.getString(5),res.getString(6)});
+            }
+            tb_pesan.setModel(tabelhead);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }              
     }
 
     /**
@@ -29,14 +101,15 @@ public class GUI_Table extends javax.swing.JFrame {
 
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        tb_pesan = new javax.swing.JTable();
+        cmb_pesan = new javax.swing.JComboBox<String>();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jLabel1.setText("ID Pesanan");
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tb_pesan.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -47,38 +120,57 @@ public class GUI_Table extends javax.swing.JFrame {
                 "ID Pesanan", "Nama Pembeli", "Ukuran Barang", "Alamat", "Jumlah"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(tb_pesan);
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmb_pesan.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmb_pesanActionPerformed(evt);
+            }
+        });
+
+        jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
+        jLabel2.setText("Data Pemesanan Barang");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(28, 28, 28)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 352, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(34, 34, 34)
-                        .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                        .addGap(158, 158, 158)
+                        .addComponent(jLabel2))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(49, 49, 49)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 486, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addGap(34, 34, 34)
+                                .addComponent(cmb_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(50, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addComponent(jLabel2)
+                .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                    .addComponent(cmb_pesan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 133, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+                .addContainerGap(100, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void cmb_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmb_pesanActionPerformed
+        // TODO add your handling code here:
+        tabel();
+    }//GEN-LAST:event_cmb_pesanActionPerformed
 
     /**
      * @param args the command line arguments
@@ -116,9 +208,10 @@ public class GUI_Table extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> cmb_pesan;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JTable tb_pesan;
     // End of variables declaration//GEN-END:variables
 }
