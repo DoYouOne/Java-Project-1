@@ -164,7 +164,6 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
                 ResultSet rs = statement.executeQuery(sql);
                 if (rs.next()) {
                     txt_nama.setText(rs.getString(3));
-                    //PekerMene
                     txt_alamat.setText(rs.getString(5));
                     txt_jumlah.setText(rs.getString(6));
                     txt_id.setText(rs.getString(2));

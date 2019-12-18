@@ -134,30 +134,25 @@ public class GUI_Produksi extends javax.swing.JFrame {
         }
     }
     
-   //PR
     public void search(){
         String barang = null;
         DefaultTableModel tabelhead = new DefaultTableModel();
         tabelhead.addColumn("ID Pesanan");
+        tabelhead.addColumn("Ongkos");
+        tabelhead.addColumn("Bahan Baku");
         tabelhead.addColumn("Nama");
-        tabelhead.addColumn("Jumlah");
-        tabelhead.addColumn("ID Pesanan");
-        tabelhead.addColumn("Ukurang Barang");
         try {
             try (Statement statement = conn.createStatement()) {
                 Koneksi();
-                String sql = "select * from pesanan where `id_pesanan` like '%" + txt_cari.getText() + "%'";
+                String sql = "select * from rencana_produksi where `id_pesanan` like '%" + txt_cari.getText() + "%'";
                 ResultSet rs = statement.executeQuery(sql);
                 if (rs.next()) {
-                    txt_nama.setText(rs.getString(3));
-                    //PekerMene
-                    txt_alamat.setText(rs.getString(5));
-                    txt_jumlah.setText(rs.getString(6));
-                    txt_id.setText(rs.getString(2));
+                    txt_pembeli.setText(rs.getString(1));
+                    txt_ongkos.setText(rs.getString(2));
                     while (rs.next()) {
-                        tabelhead.addRow(new Object[]{rs.getString(3), rs.getString(5), rs.getString(6), rs.getString(2), rs.getString(4)});
+                        tabelhead.addRow(new Object[]{rs.getString(1), rs.getString(2),rs.getString(3),rs.getString(4)});
                     }
-                    tb_barang.setModel(tabelhead);
+                    table1.setModel(tabelhead);
                     statement.close();
                 } else {
                     JOptionPane.showMessageDialog(null, "Barang yang Anda cari tidak ada");
@@ -166,6 +161,23 @@ public class GUI_Produksi extends javax.swing.JFrame {
         } catch (HeadlessException | SQLException ex) {
             System.out.println("Error." + ex);
         }
+    }
+
+    public void delete() {
+        int Confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        if (Confirmation == 0) {
+            try {
+                String sql = "DELETE FROM rencana_produksi WHERE id_pesanan='" + txt_cari.getText() + "'";
+                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+                stmt.executeUpdate();
+                JOptionPane.showMessageDialog(null, "Delete successful");
+            } catch (HeadlessException | SQLException e) {
+                JOptionPane.showMessageDialog(null, "Can not be deleted");
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Please check again");
+        }
+        refresh();
     }
 
     /**
@@ -191,9 +203,9 @@ public class GUI_Produksi extends javax.swing.JFrame {
         jLabel8 = new javax.swing.JLabel();
         txt_cari = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        table = new javax.swing.JTable();
-        jButton4 = new javax.swing.JButton();
+        table1 = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -242,7 +254,13 @@ public class GUI_Produksi extends javax.swing.JFrame {
 
         jLabel8.setText("__________________________________________________________________");
 
-        table.setModel(new javax.swing.table.DefaultTableModel(
+        txt_cari.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_cariActionPerformed(evt);
+            }
+        });
+
+        table1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -253,19 +271,19 @@ public class GUI_Produksi extends javax.swing.JFrame {
                 "ID Pesanan", "Nama", "Bahan Baku", "Ongkos"
             }
         ));
-        jScrollPane2.setViewportView(table);
-
-        jButton4.setText("Delete");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
-            }
-        });
+        jScrollPane2.setViewportView(table1);
 
         jButton2.setText("Cari ID Pesanan");
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText("Delete");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
             }
         });
 
@@ -276,13 +294,13 @@ public class GUI_Produksi extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGap(30, 30, 30)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jButton3)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                .addComponent(jButton4)
-                                .addGap(0, 0, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -311,7 +329,7 @@ public class GUI_Produksi extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel1)
-                .addGap(115, 115, 115))
+                .addGap(123, 123, 123))
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(30, 30, 30)
@@ -349,9 +367,9 @@ public class GUI_Produksi extends javax.swing.JFrame {
                     .addComponent(jButton2))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jButton4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addContainerGap())
             .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                 .addGroup(layout.createSequentialGroup()
                     .addGap(84, 84, 84)
@@ -382,12 +400,16 @@ public class GUI_Produksi extends javax.swing.JFrame {
         // TODO add your handlin code here:
     }//GEN-LAST:event_jButton5ActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-    }//GEN-LAST:event_jButton4ActionPerformed
-
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         search();
     }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void txt_cariActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_cariActionPerformed
+    }//GEN-LAST:event_txt_cariActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        delete();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -430,7 +452,7 @@ public class GUI_Produksi extends javax.swing.JFrame {
     private javax.swing.JComboBox cmb_pesan;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton5;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -439,7 +461,7 @@ public class GUI_Produksi extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable table;
+    private javax.swing.JTable table1;
     private javax.swing.JTextField txt_cari;
     private javax.swing.JTextField txt_ongkos;
     private javax.swing.JTextField txt_pembeli;
