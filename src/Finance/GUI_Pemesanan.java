@@ -12,6 +12,7 @@ import Manufacturing.Koneksi;
 import java.awt.HeadlessException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -25,7 +26,10 @@ import javax.swing.table.DefaultTableModel;
  * @author MikuniTensai
  */
 public class GUI_Pemesanan extends javax.swing.JFrame {
-
+    int baris = 0;
+    static Object kolom[] = {"ID Pesanan", "Nama Pembeli", "Ukuran", "Alamat", "Jumlah"};
+    DefaultTableModel mdl = new DefaultTableModel(kolom,baris) ;
+    
     Statement stat;
     ResultSet rs;
     Statement s;
@@ -38,7 +42,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     public GUI_Pemesanan() {
         initComponents();
         no_urut();
-        tampil();
+        //tampil();
     }
 
     public Connection conn;
@@ -199,8 +203,65 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     }
     
     public void add_temp(){
-        String id = txt_id.getText();
-        String nama = txt_nama.getText();
+        mdl.addRow(new Object []{ 
+           txt_id.getText(),
+           txt_nama.getText(),
+           txt_pilih.getSelectedItem(),
+           txt_alamat.getText(),
+           txt_jumlah.getText()
+       } ) ;     
+        tb_barang.setModel(mdl) ;
+        
+        
+        txt_nama.setText(null);
+        txt_pilih.setSelectedIndex(0);
+        txt_alamat.setText(null);
+        txt_jumlah.setText(null);
+    }
+    
+    public void add(){
+        DefaultTableModel tabelhead = new DefaultTableModel();
+        tabelhead.addColumn("ID Pesanan");
+        tabelhead.addColumn("Nama Pembeli");
+        tabelhead.addColumn("Ukuran Barang");
+        tabelhead.addColumn("Alamat");
+        tabelhead.addColumn("Jumlah");
+        
+         int rows = tb_barang.getRowCount();
+
+        System.out.println(""+rows);
+        for(int row = 0; row<rows ; row++)
+        {
+            String id_p     = (String) tb_barang.getValueAt(row, 0);
+            String nama_p   = (String) tb_barang.getValueAt(row, 1);
+            String ukuran   = (String) tb_barang.getValueAt(row, 2);
+            String alamat   = (String) tb_barang.getValueAt(row, 3);
+            String jumlah   = (String) tb_barang.getValueAt(row, 4);
+         try{
+          Class.forName("com.mysql.jdbc.Driver");
+            java.sql.Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3305/db_inventory","root","root");
+
+
+          String query = "insert into pemesanan(id_pesanan,nama_pembeli,ukuran_barang,Alamat,Jumlah) values(?,?,?,?,?)" ;
+
+         PreparedStatement stmt = con.prepareStatement(query);
+         stmt.setString(1, id_p); //Invoice No
+         stmt.setString(2, nama_p); //Code
+         stmt.setString(3, ukuran); //Description
+         stmt.setString(4,alamat); //Bonusable
+         stmt.setString(4,jumlah); //Bonusable
+
+
+         stmt.addBatch();
+        stmt.executeBatch();
+         con.commit();
+         }
+
+         catch(Exception ex)
+         {
+          JOptionPane.showMessageDialog(null, "Cannot save. "+ ex);
+            }    
+        }
     }
 
     /**
@@ -218,7 +279,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
         jTextArea1 = new javax.swing.JTextArea();
         jLabel1 = new javax.swing.JLabel();
         txt_nama = new javax.swing.JTextField();
-        txt_pilih = new javax.swing.JComboBox<>();
+        txt_pilih = new javax.swing.JComboBox<String>();
         txt_id = new javax.swing.JTextField();
         btn_pesan = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
@@ -255,10 +316,15 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
         jScrollPane3.setViewportView(jTextArea1);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         jLabel1.setText("Nama Pembeli ");
 
-        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Kecil", "Sedang", "Besar" }));
+        txt_pilih.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Kecil", "Sedang", "Besar" }));
         txt_pilih.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 txt_pilihActionPerformed(evt);
@@ -436,57 +502,44 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_txt_pilihActionPerformed
 
     private void btn_pesanActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_pesanActionPerformed
-        // TODO add your handling code here:
         insert();
     }//GEN-LAST:event_btn_pesanActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
         // TODO add your handling code here:
+        txt_nama.setText(null);
+        txt_pilih.setSelectedIndex(0);
+        txt_alamat.setText(null);
+        txt_jumlah.setText(null);
     }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
         // TODO add your handling code here:
+       add_temp();
     }//GEN-LAST:event_btn_addActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        delete();
+        int Confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete ?", "Confirmation", JOptionPane.YES_NO_OPTION);
+        if (Confirmation == 0) {
+            int baris_grid = tb_barang.getSelectedRow() ;
+            mdl.removeRow(baris_grid);
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         search();
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        tb_barang.setModel(mdl);
+    }//GEN-LAST:event_formComponentShown
+
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(GUI_Pemesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(GUI_Pemesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(GUI_Pemesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(GUI_Pemesanan.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-
-        /* Create and display the form */
+    public static void main(String args[]) throws SQLException {
+       /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GUI_Pemesanan().setVisible(true);
