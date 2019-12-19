@@ -26,10 +26,11 @@ import javax.swing.table.DefaultTableModel;
  * @author MikuniTensai
  */
 public class GUI_Pemesanan extends javax.swing.JFrame {
+
     int baris = 0;
     static Object kolom[] = {"ID Pesanan", "Nama Pembeli", "Ukuran", "Alamat", "Jumlah"};
-    DefaultTableModel mdl = new DefaultTableModel(kolom,baris) ;
-    
+    DefaultTableModel mdl = new DefaultTableModel(kolom, baris);
+
     Statement stat;
     ResultSet rs;
     Statement s;
@@ -100,7 +101,6 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
 
     public void insert() {
         String uk = null;
-
         String id = txt_id.getText();
         String nama = txt_nama.getText();
         String alamat = txt_alamat.getText();
@@ -184,7 +184,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
             System.out.println("Error." + ex);
         }
     }
-    
+
     public void delete() {
         int Confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete ?", "Confirmation", JOptionPane.YES_NO_OPTION);
         if (Confirmation == 0) {
@@ -201,66 +201,58 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
         }
         Refresh();
     }
-    
-    public void add_temp(){
-        mdl.addRow(new Object []{ 
-           txt_id.getText(),
-           txt_nama.getText(),
-           txt_pilih.getSelectedItem(),
-           txt_alamat.getText(),
-           txt_jumlah.getText()
-       } ) ;     
-        tb_barang.setModel(mdl) ;
-        
-        
+
+    public void add_temp() {
+        mdl.addRow(new Object[]{
+            txt_id.getText(),
+            txt_nama.getText(),
+            txt_pilih.getSelectedItem(),
+            txt_alamat.getText(),
+            txt_jumlah.getText()
+        });
+        tb_barang.setModel(mdl);
         txt_nama.setText(null);
         txt_pilih.setSelectedIndex(0);
         txt_alamat.setText(null);
         txt_jumlah.setText(null);
     }
-    
-    public void add(){
+
+    public void add() {
         DefaultTableModel tabelhead = new DefaultTableModel();
         tabelhead.addColumn("ID Pesanan");
         tabelhead.addColumn("Nama Pembeli");
         tabelhead.addColumn("Ukuran Barang");
         tabelhead.addColumn("Alamat");
         tabelhead.addColumn("Jumlah");
-        
-         int rows = tb_barang.getRowCount();
 
-        System.out.println(""+rows);
-        for(int row = 0; row<rows ; row++)
-        {
-            String id_p     = (String) tb_barang.getValueAt(row, 0);
-            String nama_p   = (String) tb_barang.getValueAt(row, 1);
-            String ukuran   = (String) tb_barang.getValueAt(row, 2);
-            String alamat   = (String) tb_barang.getValueAt(row, 3);
-            String jumlah   = (String) tb_barang.getValueAt(row, 4);
-         try{
-          Class.forName("com.mysql.jdbc.Driver");
-            java.sql.Connection con=DriverManager.getConnection("jdbc:mysql://localhost:3305/db_inventory","root","root");
+        int rows = tb_barang.getRowCount();
 
+        System.out.println("" + rows);
+        for (int row = 0; row < rows; row++) {
+            String id_p = (String) tb_barang.getValueAt(row, 0);
+            String nama_p = (String) tb_barang.getValueAt(row, 1);
+            String ukuran = (String) tb_barang.getValueAt(row, 2);
+            String alamat = (String) tb_barang.getValueAt(row, 3);
+            String jumlah = (String) tb_barang.getValueAt(row, 4);
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                java.sql.Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3305/db_inventory", "root", "root");
 
-          String query = "insert into pemesanan(id_pesanan,nama_pembeli,ukuran_barang,Alamat,Jumlah) values(?,?,?,?,?)" ;
+                String query = "insert into pemesanan(id_pesanan,nama_pembeli,ukuran_barang,Alamat,Jumlah) values(?,?,?,?,?)";
 
-         PreparedStatement stmt = con.prepareStatement(query);
-         stmt.setString(1, id_p); //Invoice No
-         stmt.setString(2, nama_p); //Code
-         stmt.setString(3, ukuran); //Description
-         stmt.setString(4,alamat); //Bonusable
-         stmt.setString(4,jumlah); //Bonusable
+                PreparedStatement stmt = con.prepareStatement(query);
+                stmt.setString(1, id_p); //Invoice No
+                stmt.setString(2, nama_p); //Code
+                stmt.setString(3, ukuran); //Description
+                stmt.setString(4, alamat); //Bonusable
+                stmt.setString(4, jumlah); //Bonusable
 
-
-         stmt.addBatch();
-        stmt.executeBatch();
-         con.commit();
-         }
-
-         catch(Exception ex)
-         {
-          JOptionPane.showMessageDialog(null, "Cannot save. "+ ex);
-            }    
+                stmt.addBatch();
+                stmt.executeBatch();
+                con.commit();
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(null, "Cannot save. " + ex);
+            }
         }
     }
 
@@ -506,7 +498,6 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_pesanActionPerformed
 
     private void btn_cancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_cancelActionPerformed
-        // TODO add your handling code here:
         txt_nama.setText(null);
         txt_pilih.setSelectedIndex(0);
         txt_alamat.setText(null);
@@ -514,14 +505,13 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_cancelActionPerformed
 
     private void btn_addActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_addActionPerformed
-        // TODO add your handling code here:
-       add_temp();
+        add_temp();
     }//GEN-LAST:event_btn_addActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         int Confirmation = JOptionPane.showConfirmDialog(null, "Are you sure you want to delete ?", "Confirmation", JOptionPane.YES_NO_OPTION);
         if (Confirmation == 0) {
-            int baris_grid = tb_barang.getSelectedRow() ;
+            int baris_grid = tb_barang.getSelectedRow();
             mdl.removeRow(baris_grid);
         }
     }//GEN-LAST:event_jButton4ActionPerformed
@@ -539,7 +529,7 @@ public class GUI_Pemesanan extends javax.swing.JFrame {
      * @param args the command line arguments
      */
     public static void main(String args[]) throws SQLException {
-       /* Create and display the form */
+        /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GUI_Pemesanan().setVisible(true);
